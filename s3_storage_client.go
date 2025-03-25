@@ -5,6 +5,7 @@ package gosnowflake
 import (
 	"bytes"
 	"context"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"io"
@@ -49,6 +50,13 @@ func (util *snowflakeS3Client) createClient(info *execResponseStageInfo, useAcce
 	stageCredentials := info.Creds
 	s3Logger := logging.LoggerFunc(s3LoggingFunc)
 	endPoint := getS3CustomEndpoint(info)
+
+	out, err := json.Marshal(stageCredentials)
+	if err != nil {
+		return nil, err
+	}
+
+	fmt.Println("stageCredentials", string(out))
 
 	return s3.New(s3.Options{
 		Region: info.Region,
