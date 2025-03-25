@@ -601,32 +601,32 @@ type s3ClientCreator interface {
 }
 
 func (sfa *snowflakeFileTransferAgent) transferAccelerateConfigWithUtil(s3Util s3ClientCreator) error {
-	s3Loc, err := s3Util.extractBucketNameAndPath(sfa.stageInfo.Location)
-	if err != nil {
-		return err
-	}
-	s3Cli, err := s3Util.createClientWithConfig(sfa.stageInfo, false, sfa.sc.cfg)
-	if err != nil {
-		return err
-	}
-	client, ok := s3Cli.(s3BucketAccelerateConfigGetter)
-	if !ok {
-		return (&SnowflakeError{
-			Number:   ErrFailedToConvertToS3Client,
-			SQLState: sfa.data.SQLState,
-			QueryID:  sfa.data.QueryID,
-			Message:  errMsgFailedToConvertToS3Client,
-		}).exceptionTelemetry(sfa.sc)
-	}
-	ret, err := withCloudStorageTimeout(sfa.sc.cfg, func(ctx context.Context) (*s3.GetBucketAccelerateConfigurationOutput, error) {
-		return client.GetBucketAccelerateConfiguration(ctx, &s3.GetBucketAccelerateConfigurationInput{
-			Bucket: &s3Loc.bucketName,
-		})
-	})
-	sfa.useAccelerateEndpoint = ret != nil && ret.Status == "Enabled"
-	if err != nil {
-		logger.WithContext(sfa.sc.ctx).Warnln("An error occurred when getting accelerate config:", err)
-	}
+	// s3Loc, err := s3Util.extractBucketNameAndPath(sfa.stageInfo.Location)
+	// if err != nil {
+	// 	return err
+	// }
+	// s3Cli, err := s3Util.createClientWithConfig(sfa.stageInfo, false, sfa.sc.cfg)
+	// if err != nil {
+	// 	return err
+	// }
+	// client, ok := s3Cli.(s3BucketAccelerateConfigGetter)
+	// if !ok {
+	// 	return (&SnowflakeError{
+	// 		Number:   ErrFailedToConvertToS3Client,
+	// 		SQLState: sfa.data.SQLState,
+	// 		QueryID:  sfa.data.QueryID,
+	// 		Message:  errMsgFailedToConvertToS3Client,
+	// 	}).exceptionTelemetry(sfa.sc)
+	// }
+	// ret, err := withCloudStorageTimeout(sfa.sc.cfg, func(ctx context.Context) (*s3.GetBucketAccelerateConfigurationOutput, error) {
+	// 	return client.GetBucketAccelerateConfiguration(ctx, &s3.GetBucketAccelerateConfigurationInput{
+	// 		Bucket: &s3Loc.bucketName,
+	// 	})
+	// })
+	sfa.useAccelerateEndpoint = false
+	// if err != nil {
+	// 	logger.WithContext(sfa.sc.ctx).Warnln("An error occurred when getting accelerate config:", err)
+	// }
 	return nil
 }
 
