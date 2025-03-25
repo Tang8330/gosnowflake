@@ -133,7 +133,7 @@ func (util *snowflakeS3Client) getFileHeader(meta *fileMetadata, filename string
 			}
 			meta.resStatus = errStatus
 			meta.lastError = err
-			return nil, fmt.Errorf("error while retrieving header")
+			return nil, fmt.Errorf("error while retrieving header: %w", err)
 		}
 		meta.resStatus = errStatus
 		meta.lastError = err
